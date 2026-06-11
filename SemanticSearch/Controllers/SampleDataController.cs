@@ -1,9 +1,7 @@
 using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Mvc;
-using ElBruno.LocalEmbeddings;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.AI;
-using OllamaSharp;
 using SemanticSearch.Models;
 using System.Collections.Concurrent;
 using System.Numerics.Tensors;
@@ -12,19 +10,16 @@ namespace SemanticSearch.Controllers {
 
     [Route("api/[controller]")]
     public class SampleDataController : Controller {
-        //readonly IEmbeddingGenerator<string, Embedding<float>> Embedder;
+        readonly IEmbeddingGenerator<string, Embedding<float>> Embedder;
         readonly static ConcurrentDictionary<string, Embedding<float>> cache = new(StringComparer.OrdinalIgnoreCase);
         static Task? _cacheInitTask;
-        static IEmbeddingGenerator<string, Embedding<float>> Embedder;
 
-        public SampleDataController() {
-            //Embedder = new OllamaApiClient(new Uri("http://localhost:11434"), "nomic-embed-text");
+        public SampleDataController(IEmbeddingGenerator<string, Embedding<float>> embedder) {
+            Embedder = embedder;
         }
 
         public async Task FillCacheAsync(IEnumerable<string> words)
         {
-            Embedder ??= await LocalEmbeddingGenerator.CreateAsync();
-
             try
             {
                 var nonCachedWords = words.Where(x => !cache.ContainsKey(x)).ToArray();
