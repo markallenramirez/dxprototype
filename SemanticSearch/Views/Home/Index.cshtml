@@ -30,6 +30,9 @@
     })
     //.OnEditorPreparing("onEditorPreparing")
     .SearchPanel(searchPanel => searchPanel.Visible(true))
+    .FilterRow(filterRow => filterRow.Visible(true))
+    .HeaderFilter(headerFilter => headerFilter.Visible(true).Search(search => search.Enabled(true)))
+    .CustomizeColumns("customizeColumns")
 )
 
 <script>
@@ -49,5 +52,19 @@
         if (e.parentType === 'searchPanel') {
         
         }
+    }
+
+    function customizeColumns(columns) {
+        columns.forEach(column => {
+            column.calculateFilterExpression = function(filterValue, selectedFilterOperation, target) {
+                if (target === 'search') {
+                    return [this.dataField, '<>', null];
+                }
+                // Invoke the default implementation for other filter operations
+                if(!this.defaultCalculateFilterExpression)
+                    return [this.dataField, 'contains', filterValue];
+                return this.defaultCalculateFilterExpression.apply(this, arguments);
+            }
+        });
     }
 </script>
