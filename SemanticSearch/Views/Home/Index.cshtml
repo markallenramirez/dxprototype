@@ -14,17 +14,22 @@
 @(Html.DevExtreme().DataGrid<DictionaryEntry>()
     .ID("grid")
     .ElementAttr(new { @class = "dx-card wide-card" })
-    .DataSource(d => d.Mvc().Controller("SampleData").LoadAction("Get").Key("ID").LoadParams(new { searchValue = new JS("getSearchValue") }))
+    .DataSource(d => d.Mvc()
+        .Controller("SampleData")
+        .LoadAction("Get")
+        .Key("ID")
+        .LoadParams(new { searchValue = new JS("getSearchValue") })
+    )
+    .RemoteOperations(true)
     .ShowBorders(false)
     .Height(600)
-    .FilterRow(f => f.Visible(true))
     .Columns(columns => {
         columns.AddFor(m => m.ID);
         columns.AddFor(m => m.Name);
         columns.AddFor(m => m.Description);
     })
     //.OnEditorPreparing("onEditorPreparing")
-    //.SearchPanel(searchPanel => searchPanel.Visible(true))
+    .SearchPanel(searchPanel => searchPanel.Visible(true))
 )
 
 <script>
@@ -35,7 +40,9 @@
     }
 
     function getSearchValue() {
-        return $('#searchPanel').dxTextBox('instance').option('value');
+        //return $('#searchPanel').dxTextBox('instance').option('value');
+        const grid = $('#grid').dxDataGrid('instance')
+        return grid.option('searchPanel.text');
     }
 
     function onEditorPreparing(e) {

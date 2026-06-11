@@ -64,6 +64,8 @@ namespace SemanticSearch.Controllers {
                 return DataSourceLoader.Load(SampleData.DictionaryEntries, loadOptions);
             }
 
+            loadOptions.Filter = null; // Ignore default filtering
+
             await FillCacheAsync([searchValue]);
 
             var result = SampleData.DictionaryEntries
