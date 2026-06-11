@@ -2,15 +2,6 @@
 
 <h2 class="content-block">Home</h2>
 
-@(Html.DevExtreme().TextBox()
-    .ID("searchPanel")
-)
-
-@(Html.DevExtreme().Button()
-    .Text("Search")
-    .OnClick("onClick")
-)
-
 @(Html.DevExtreme().DataGrid<DictionaryEntry>()
     .ID("grid")
     .ElementAttr(new { @class = "dx-card wide-card" })
@@ -28,7 +19,6 @@
         columns.AddFor(m => m.Name);
         columns.AddFor(m => m.Description);
     })
-    //.OnEditorPreparing("onEditorPreparing")
     .SearchPanel(searchPanel => searchPanel.Visible(true))
     .FilterRow(filterRow => filterRow.Visible(true))
     .HeaderFilter(headerFilter => headerFilter.Visible(true).Search(search => search.Enabled(true)))
@@ -36,22 +26,9 @@
 )
 
 <script>
-    function onClick() { 
-        const grid = $('#grid').dxDataGrid('instance');
-        //const searchValue = $('#searchPanel').dxTextBox('instance').option('value');
-        grid.refresh();
-    }
-
     function getSearchValue() {
-        //return $('#searchPanel').dxTextBox('instance').option('value');
         const grid = $('#grid').dxDataGrid('instance')
         return grid.option('searchPanel.text');
-    }
-
-    function onEditorPreparing(e) {
-        if (e.parentType === 'searchPanel') {
-        
-        }
     }
 
     function customizeColumns(columns) {
@@ -60,6 +37,7 @@
                 if (target === 'search') {
                     return [this.dataField, '<>', null];
                 }
+
                 // Invoke the default implementation for other filter operations
                 if(!this.defaultCalculateFilterExpression)
                     return [this.dataField, 'contains', filterValue];
