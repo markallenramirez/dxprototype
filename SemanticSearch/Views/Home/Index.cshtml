@@ -1,0 +1,46 @@
+@using SemanticSearch.Models
+
+<h2 class="content-block">Home</h2>
+
+@(Html.DevExtreme().TextBox()
+    .ID("searchPanel")
+)
+
+@(Html.DevExtreme().Button()
+    .Text("Search")
+    .OnClick("onClick")
+)
+
+@(Html.DevExtreme().DataGrid<DictionaryEntry>()
+    .ID("grid")
+    .ElementAttr(new { @class = "dx-card wide-card" })
+    .DataSource(d => d.Mvc().Controller("SampleData").LoadAction("Get").Key("ID").LoadParams(new { searchValue = new JS("getSearchValue") }))
+    .ShowBorders(false)
+    .Height(600)
+    .FilterRow(f => f.Visible(true))
+    .Columns(columns => {
+        columns.AddFor(m => m.ID);
+        columns.AddFor(m => m.Name);
+        columns.AddFor(m => m.Description);
+    })
+    //.OnEditorPreparing("onEditorPreparing")
+    //.SearchPanel(searchPanel => searchPanel.Visible(true))
+)
+
+<script>
+    function onClick() { 
+        const grid = $('#grid').dxDataGrid('instance');
+        //const searchValue = $('#searchPanel').dxTextBox('instance').option('value');
+        grid.refresh();
+    }
+
+    function getSearchValue() {
+        return $('#searchPanel').dxTextBox('instance').option('value');
+    }
+
+    function onEditorPreparing(e) {
+        if (e.parentType === 'searchPanel') {
+        
+        }
+    }
+</script>
